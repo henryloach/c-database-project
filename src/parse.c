@@ -22,8 +22,22 @@ int read_employees(int fd, struct dbheader_t* dbhdr, struct employee_t** employe
 
 }
 
-int output_file(int fd, struct dbheader_t* dbhdr, struct employee_t* employees) {
+int output_file(int fd, struct dbheader_t* dbhdr) {
+    if (fd < 0) {
+        printf("Got a bad FD from the user\n");
+        return STATUS_ERROR;
+    }
 
+    dbhdr->magic = htonl(dbhdr->magic);
+    dbhdr->version = htons(dbhdr->version);
+    dbhdr->count = htons(dbhdr->count);
+    dbhdr->filesize = htonl(dbhdr->filesize);
+
+    lseek(fd, 0, SEEK_SET);
+
+    write(fd, dbhdr, sizeof(struct dbheader_t));
+
+    return 0;
 }	
 
 int validate_db_header(int fd, struct dbheader_t** headerOut) {
@@ -38,16 +52,16 @@ int validate_db_header(int fd, struct dbheader_t** headerOut) {
         return -1;
     }
 
-    if (read(fd, header, sizeof(struct dbheader_t)) != sizeof(struct dbheader_t)); {
+    if (read(fd, header, sizeof(struct dbheader_t)) != sizeof(struct dbheader_t)) {
         perror("read");
         free(header);
         return STATUS_ERROR;
     }
 
-    header->magic = ntohs(header->magic);      
+    header->magic = ntohl(header->magic);      
     header->version = ntohs(header->version);
     header->count = ntohs(header->count);   
-    header->filesize = ntohs(header->filesize);   
+    header->filesize = ntohl(header->filesize);   
 
     if (header->magic != HEADER_MAGIC) {
         printf("Improper header magic\n");
@@ -68,6 +82,8 @@ int validate_db_header(int fd, struct dbheader_t** headerOut) {
         free(header);
         return STATUS_ERROR;
     }
+
+    *headerOut = header;
 }
 
 int create_db_header(int fd, struct dbheader_t** headerOut) {

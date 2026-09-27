@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
     printf("Newfile: %d\n", newfile);
     printf("Filepath: %s\n", filepath);
 
-    output_file(dbfd, db_header);
+    output_file(dbfd, db_header, employees);
 
     return 0;
 }

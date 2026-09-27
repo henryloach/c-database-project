@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
 
     int dbfd = -1;
     struct dbheader_t* db_header = NULL;
+    struct employee_t* employees = NULL;
 
     while ((c = getopt(argc, argv, "nf:")) != -1) {
         switch (c) {
@@ -65,6 +66,11 @@ int main(int argc, char *argv[]) {
             printf("Failed to validate database header\n");
             return -1;
         }
+    }
+
+    if (read_employees(dbfd, db_header, &employees) != STATUS_SUCCESS) {
+        printf("failed to read employees\n");
+        return 0;
     }
 
     printf("Newfile: %d\n", newfile);

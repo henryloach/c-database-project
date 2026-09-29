@@ -78,13 +78,8 @@ int main(int argc, char *argv[]) {
     }
 
     if (addstring) {
-        db_header->count++;
-        employees = realloc(employees, db_header->count*sizeof(struct employee_t));
-        add_employee(db_header, employees, addstring);
+        add_employee(db_header, &employees, addstring);
     }
-
-    printf("Newfile: %d\n", newfile);
-    printf("Filepath: %s\n", filepath);
 
     output_file(dbfd, db_header, employees);
 

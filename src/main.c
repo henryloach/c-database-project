@@ -16,6 +16,7 @@ void print_usage(char *argv[]) {
 int main(int argc, char *argv[]) { 
 	int c;
     bool newfile = false;
+    bool list = false;
     char* filepath = NULL;
     char* addstring = NULL;
 
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
     struct dbheader_t* db_header = NULL;
     struct employee_t* employees = NULL;
 
-    while ((c = getopt(argc, argv, "nf:a:")) != -1) {
+    while ((c = getopt(argc, argv, "nf:a:l")) != -1) {
         switch (c) {
             case 'n':
                 newfile = true;
@@ -33,6 +34,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'a':
                 addstring = optarg;
+                break;
+            case 'l':
+                list = true;
                 break;
             case '?':
                 printf("Unknown option -%c\n", c);
@@ -79,6 +83,10 @@ int main(int argc, char *argv[]) {
 
     if (addstring) {
         add_employee(db_header, &employees, addstring);
+    }
+
+    if (list) {
+        list_employees(db_header, employees);
     }
 
     output_file(dbfd, db_header, employees);
